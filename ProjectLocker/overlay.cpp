@@ -148,7 +148,7 @@ void Overlay::Menu()
         ImGui::Text(" [ Sub ]");
         ImGui::Separator();
 
-        ImGui::Text("[+] ESP Options");
+        ImGui::Text("[+] ESP Colors");
         ImGui::ColorEdit4("Normal", &color_Normal.x);
         ImGui::ColorEdit4("Visible", &color_Visible.x);
         ImGui::ColorEdit4("Team", &color_Team.x);
@@ -199,8 +199,7 @@ void Overlay::ESP()
         // Invalid Player
         if (pClientPlayer == 0)
             continue;
-
-        if (pClientPlayer == LocalPlayer)
+        else if (pClientPlayer == LocalPlayer)
             continue;
 
         // Spectaror worning - Example
@@ -220,12 +219,13 @@ void Overlay::ESP()
         Vector3 PlayerOrigin = m.RPM<Vector3>(PosComponent + 0x30);
         float distance = GetDistance(LocalPos, PlayerOrigin);
 
+        // Check ESP MaxDistance
         if (m_maxdist < (int)distance)
             continue;
 
         // Visible
         bool Visible = m.RPM<bool>(pClientSoldier + 0x5B1);
-        Visible = !Visible;
+        Visible = !Visible; // Need it
 
         // Some check
         if (Health <= 0.f)
@@ -235,20 +235,20 @@ void Overlay::ESP()
         else if (PlayerOrigin.x == 0.f && PlayerOrigin.y == 0.f)
             continue;
 
-        // W2S
+        // WorldToScreen
         Vector3 pScreen = {};
         W2S(PlayerOrigin, pScreen);
         if (pScreen.x == 0 && pScreen.y == 0)
             continue;
 
-        // ESP color
+        // Set ESP color
         ImColor color;
 
         if (Visible)
             color = color_Visible;
         else
             color = color_Normal;
-
+        
         if (m_TeamESP)
         {
             if (Team == LocalTeam)
